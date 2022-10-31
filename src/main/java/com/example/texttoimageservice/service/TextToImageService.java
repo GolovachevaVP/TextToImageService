@@ -167,23 +167,10 @@ public class TextToImageService {
     }
 
     private void saveFileToResponse(long chatId, HttpServletResponse response) throws IOException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
-//        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=questionnaire"+
-//                chatId + ".png");
         response.setContentType("image/png");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=questionnaire"+
                 chatId + ".png");
         response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
-//        File file = new File(getClass().getClassLoader().getResource("questionnaires/questionnaire" +
-//                 chatId + ".png").getFile());
-//        InputStreamResource resource = new InputStreamResource(Files.newInputStream(file.toPath()));
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .contentLength(file.length())
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(resource);
-//    }
         Path path = Paths.get("src/main/resources/questionnaires/questionnaire" +chatId + ".png");
         BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path));
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
@@ -193,7 +180,5 @@ public class TextToImageService {
                 out.write(buffer, 0, bytesRead);
             }
             out.flush();
-
-
     }
 }
