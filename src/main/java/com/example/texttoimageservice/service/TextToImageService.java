@@ -69,7 +69,6 @@ public class TextToImageService {
 
         int linesHeight = lineHeightHeader * linesHeader.size() + lineHeightDescription * linesDescription.size();
         if (linesHeight > image.getHeight() - lineHeightDescription - INDENTATION_BOTTOM) {
-            log.error("текст больше картинки");
             return true;
         }
 
