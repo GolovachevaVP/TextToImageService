@@ -1,9 +1,7 @@
 package com.example.texttoimageservice.controller;
 
-import com.example.texttoimageservice.dto.ChatIdDescriptionDto;
 import com.example.texttoimageservice.service.TextToImageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +14,12 @@ import java.io.IOException;
 public class TextToImageController {
     private final TextToImageService textToImageService;
 
-    @PostMapping("/from/text/")
+    @GetMapping("/from/text/")
     public ResponseEntity<Void> getTextToImage(
-            @RequestBody ChatIdDescriptionDto chatIdDescriptionDto, HttpServletResponse response
+            @RequestParam String description, HttpServletResponse response
     ) throws IOException {
         textToImageService.getQuestionnaire(
-                chatIdDescriptionDto.getChatId(),
-                chatIdDescriptionDto.getDescription(),
+                description,
                 response
         );
         return ResponseEntity.ok().build();

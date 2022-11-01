@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -32,22 +33,23 @@ public class TextToImageService {
     private static final int INDENTATION_TOP = 30;
     private static final int INDENTATION_BOTTOM = 30;
 
-    public void getQuestionnaire(long chatId, String description, HttpServletResponse response) throws IOException {
+    public void getQuestionnaire(String description, HttpServletResponse response) throws IOException {
+        int id = new Random().nextInt(1000000);
         int fontHeaderSize = FONT_HEADER_SIZE;
         int fontDescriptionSize = FONT_DESCRIPTION_SIZE;
         boolean textDoesNotFit = true;
         while (textDoesNotFit) {
-            textDoesNotFit = saveQuestionnaire(chatId, description,
+            textDoesNotFit = saveQuestionnaire(id, description,
                     new Font("Old Standard TT", Font.BOLD, fontHeaderSize),
                     new Font("Old Standard TT", Font.PLAIN, fontDescriptionSize));
 
             fontDescriptionSize -= REDUCTION_FONT;
             fontHeaderSize -= REDUCTION_FONT;
         }
-        saveFileToResponse(chatId, response);
+        saveFileToResponse(id, response);
     }
 
-    public boolean saveQuestionnaire(long chatId, String description, Font fontHeader, Font fontDescription) throws IOException {
+    public boolean saveQuestionnaire(int id, String description, Font fontHeader, Font fontDescription) throws IOException {
         BufferedImage image = ImageIO.read(new File("src/main/resources/prerev-background.jpg"));
 
         List<String> text = changeDescription(description);
@@ -85,7 +87,7 @@ public class TextToImageService {
         g.dispose();
         ImageIO.write(image, "png",
                 new File("src/main/resources/questionnaires/questionnaire" +
-                        chatId + ".png"));
+                        id + ".png"));
 
         return false;
     }
@@ -161,12 +163,12 @@ public class TextToImageService {
         return result;
     }
 
-    private void saveFileToResponse(long chatId, HttpServletResponse response) throws IOException {
+    private void saveFileToResponse(int id, HttpServletResponse response) throws IOException {
         response.setContentType("image/png");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=questionnaire" +
-                chatId + ".png");
+                id + ".png");
         response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
-        Path path = Paths.get("src/main/resources/questionnaires/questionnaire" + chatId + ".png");
+        Path path = Paths.get("src/main/resources/questionnaires/questionnaire" + id + ".png");
         BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path));
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
         byte[] buffer = new byte[10240];
@@ -175,6 +177,6 @@ public class TextToImageService {
             out.write(buffer, 0, bytesRead);
         }
         out.flush();
-        Files.delete(Paths.get("src/main/resources/questionnaires/questionnaire" + chatId + ".png"));
+        Files.delete(Paths.get("src/main/resources/questionnaires/questionnaire" + id + ".png"));
     }
 }
