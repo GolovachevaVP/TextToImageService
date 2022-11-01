@@ -1,11 +1,7 @@
 package com.example.texttoimageservice.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -50,6 +46,7 @@ public class TextToImageService {
         }
         saveFileToResponse(chatId, response);
     }
+
     public boolean saveQuestionnaire(long chatId, String description, Font fontHeader, Font fontDescription) throws IOException {
         BufferedImage image = ImageIO.read(new File("src/main/resources/prerev-background.jpg"));
 
@@ -84,7 +81,6 @@ public class TextToImageService {
             g.drawString(linesDescription.get(i), INDENTATION_LEFT, (indent + lineHeightDescription +
                     i * lineHeightDescription));
         }
-
 
         g.dispose();
         ImageIO.write(image, "png",
@@ -146,7 +142,7 @@ public class TextToImageService {
             result.add(heading);
             for (int i = 1; i < descriptionMultiLine.length; i++) {
                 description += descriptionMultiLine[i];
-                if (!descriptionMultiLine[i].contains(".") &&!descriptionMultiLine[i].contains("!")) {
+                if (!descriptionMultiLine[i].contains(".") && !descriptionMultiLine[i].contains("!")) {
                     description += ". ";
                 }
             }
@@ -167,17 +163,18 @@ public class TextToImageService {
 
     private void saveFileToResponse(long chatId, HttpServletResponse response) throws IOException {
         response.setContentType("image/png");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=questionnaire"+
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=questionnaire" +
                 chatId + ".png");
         response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
-        Path path = Paths.get("src/main/resources/questionnaires/questionnaire" +chatId + ".png");
+        Path path = Paths.get("src/main/resources/questionnaires/questionnaire" + chatId + ".png");
         BufferedInputStream in = new BufferedInputStream(Files.newInputStream(path));
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
-            byte[] buffer = new byte[10240];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-            out.flush();
+        byte[] buffer = new byte[10240];
+        int bytesRead;
+        while ((bytesRead = in.read(buffer)) != -1) {
+            out.write(buffer, 0, bytesRead);
+        }
+        out.flush();
+        Files.delete(Paths.get("src/main/resources/questionnaires/questionnaire" + chatId + ".png"));
     }
 }

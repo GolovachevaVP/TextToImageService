@@ -27,12 +27,4 @@ public class TextToImageController {
         );
         return ResponseEntity.ok().build();
     }
-
-    @PostMapping("/test/")
-    public String test(
-            @RequestBody ChatIdDescriptionDto chatIdDescriptionDto
-            ) throws IOException {
-        return  chatIdDescriptionDto.getDescription()+" "+chatIdDescriptionDto.getChatId();
-    }
-
 }
